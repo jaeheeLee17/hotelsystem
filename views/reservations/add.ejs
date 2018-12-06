@@ -10,181 +10,48 @@ including header content which is common for all pages
 <% if (messages.success) { %>
 	<p style="color:green"><%- messages.success %></p>
 <% } %>
-<!DOCTYPE HTML>
 
-<html lang="en">
-<head>
-	<meta charset="UTF-8"/>
-	<meta name="viewport" content="width=device-width, user-scalable=no"/>
-	<meta property="og:url" content="http://www.pigno.se/barn/PIGNOSE-Calendar">
-	<meta property="og:type" content="product"/>
-	<meta property="og:title" content="PIGNOSE Calendar"/>
-	<meta property="og:description" content="PIGNOSE Calendar is beautiful and eidetic jQuery date picker plugin"/>
-	<meta property="og:image" content="http://www.pigno.se/barn/PIGNOSE-Calendar/demo/img/cover@250.png"/>
-	<meta property="og:site_name" content="PIGNOSE"/>
-	<title>PIGNOSE Calendar</title>
-	<meta name="description" content="PIGNOSE Calendar is beautiful and eidetic jQuery date picker plugin"/>
-	<link rel="shortcut icon" type="image/x-icon" href="demo/img/pignose-ico.ico"/>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/themes/prism.min.css">
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/icon.min.css">
-	<link rel="stylesheet" type="text/css" href="css/style.css"/>
-	<link rel="stylesheet" type="text/css" href="css/ui.css"/>
-	<link rel="stylesheet" type="text/css" href="css/pignose.calendar.min.css"/>
-</head>
-<script language ='javascript'>
-	function test(){
-		alert("검색을 하였습니다.");
-	}
-</script>
-<body>
+<form action="/reservations/add" method="post" name="form2">
 
-	<div id="multiple" class="article">
+	In Date
+	<input type="datetime-local" name="indate" value="<%= indate %>" />
+	<br/>
+	Out Date
+	<input type="datetime-local" name="outdate" value="<%= outdate %>" />
+	<br/>
+	Room Number
+	<select name="number">
+			<% if (numbers) { %>
+				<% numbers.forEach(function(room_number){ %>
+					<option value='<%= room_number.number %>'><%= room_number.number %></option>
+				<% }) %>
+			<% } %>
+	</select>
 
-			<div class="multi-select-calendar"></div>
-			<div class="box"></div>
-			<br>
-			<form>
-				<INPUT type = 'BUTTON' value ='검색' on click='test()'>
-			</form>
+	<br/>
+	Customer Name
 
+	<select name="customer" >
+			<% if (customers) { %>
+				<% customers.forEach(function(customer){ %>
+					<option value='<%= customer.id %>'>id:<%= customer.id%> name: <%= customer.name %></option>
 
-						<span class="close">&times;</span>
-						<h2>예약 가능한 방</h2>
-							<table>
-								<tbody>
-									<tr>
-										<td> Room_Type</td>
-										<td> Room_Number</td>
-										<td> Price</td>
-									</tr>
-								</tbody>
-							</table>
-							<div>
-				        <h1>고객정보입력</h1>
-				        <p>Name:<input type="text"></p>
-				        <p>Phone:<input type="text"></p>
-				        <p>email:<input type="text"></p>
-				        <p>Nation:<input type="text"></p>
-				        <p>Car:
-									<input type="radio" id="car1" name="car">
-									<label for="car1"><span>O</span></label>
-									<input type="radio" id="car2" name="car">
-									<label for="car2"><span>X</span></label></p>
-				        <p>Price: </p>
-				        <p><input type ="button"value="이전단계"><input type ="button"value="예약"> </p>
-				    </div>
+				<% }) %>
+			<% } %>
+	</select>
+	<br/>
+
+	<br/>
+	Check In
+	<input type="checkbox" name="checkIn" value="true"/>
+
+	<input type="submit" name="Submit" value="Add" />
+
+</form>
 
 
 
-			<div role="tabpanel" class="ui tab segment" data-tab="javascript-multiple">
-							<pre><code class="language-js">$(function() {
-	$('.calendar').pignoseCalendar({
-	multiple: true
-});
-});</code></pre>
-			</div>
-	</div>
-
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
-<script type="text/javascript" src="js/pignose.calendar.full.min.js"></script>
-<script type="text/javascript">
-	//<![CDATA[
-	$(function () {
-			$('#wrapper .version strong').text('v' + $.fn.pignoseCalendar.version);
-
-			function onSelectHandler(date, context) {
-					/**
-					 * @date is an array which be included dates(clicked date at first index)
-					 * @context is an object which stored calendar interal data.
-					 * @context.calendar is a root element reference.
-					 * @context.calendar is a calendar element reference.
-					 * @context.storage.activeDates is all toggled data, If you use toggle type calendar.
-					 * @context.storage.events is all events associated to this date
-					 */
-
-					var $element = context.element;
-					var $calendar = context.calendar;
-					var $box = $element.siblings('.box').show();
-					var text = 'Check_IN DATE : ';
-
-
-					if (date[0] !== null) {
-							text += date[0].format('YYYY-MM-DD');
-					}
-
-
-					if (date[0] !== null && date[1] !== null) {
-							text += 'Check_OUT DATE : ';
-					}
-					else if (date[0] === null && date[1] == null) {
-							text += 'nothing';
-					}
-
-					if (date[1] !== null) {
-							text += date[1].format('YYYY-MM-DD');
-					}
-
-					$box.text(text);
-					//$box.text(textOUT);
-
-			}
-
-			function onApplyHandler(date, context) {
-					/**
-					 * @date is an array which be included dates(clicked date at first index)
-					 * @context is an object which stored calendar interal data.
-					 * @context.calendar is a root element reference.
-					 * @context.calendar is a calendar element reference.
-					 * @context.storage.activeDates is all toggled data, If you use toggle type calendar.
-					 * @context.storage.events is all events associated to this date
-					 */
-
-					var $element = context.element;
-					var $calendar = context.calendar;
-					var $box = $element.siblings('.box').show();
-					var text = 'You applied date ';
-
-					if (date[0] !== null) {
-							text += date[0].format('YYYY-MM-DD');
-					}
-
-					if (date[0] !== null && date[1] !== null) {
-							text += ' ~ ';
-					}
-					else if (date[0] === null && date[1] == null) {
-							text += 'nothing';
-					}
-
-					if (date[1] !== null) {
-							text += date[1].format('YYYY-MM-DD');
-					}
-
-					$box.text(text);
-			}
-
-
-			// Multiple picker type Calendar
-			$('.multi-select-calendar').pignoseCalendar({
-					multiple: true,
-					select: onSelectHandler
-			});
-
-
-			// This use for DEMO page tab component.
-			$('.menu .item').tab();
-	});
-	//]]>
-</script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/prism.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-javascript.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-typescript.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-json.min.js"></script>
-<script type="text/javascript" src="https://twemoji.maxcdn.com/2/twemoji.min.js?2.5"></script>
-</body>
-</html>
-
+<!--
+including footer content which is common for all pages
+-->
 <%- include ../layouts/footer.ejs %>
