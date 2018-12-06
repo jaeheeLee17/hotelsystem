@@ -9,7 +9,7 @@ including header content which is common for all pages
 
 <% if (messages.success) { %>
 	<p style="color:green"><%- messages.success %></p>
-<% } %>	
+<% } %>
 
 <h1>Current Room States</h1>
 
@@ -20,7 +20,7 @@ including header content which is common for all pages
 		<br/>
 		<span class="badge badge-secondary">Empty</span>
 		<span class="badge badge-success">Reserved</span>
-		
+
 		<table class="room_type">
 				<tr>
 					<td class ="type_name" style="width:70px;"></td>
@@ -35,62 +35,77 @@ including header content which is common for all pages
 					</td>
 				</tr>
 		</table>
-		
+
 		<table  class="table table-bordered">
 			<tbody >
-		
+
 			<% var i = 0; %>
 			<% if (data) { %>
 			<% data.forEach(function(room){ %>
-				
+
 				<% if (i % 8 == 0) { %>
 					<tr >
 						<th class="floor" style="width:70px;height:70px;"><%= i / 8 + 1 %>F</th>
-		
-					
+
+
 				<% } %>
 				<% var color = "table-secondary"; %>
 				<% reserved.forEach(function(reserve) { %>
 					<% if (room.number == reserve.number) {%>
 						<% color = "table-success"; %>
-					
+
 						<% } %>
 					<% }) %>
-				
+
 					<td class="<%=color%>" role="button" tabindex="0" style="width:70px; height:70px;" data-toggle="modal" data-target="#Modal<%=room.number%>">
 							<div id = '+roomnum.toString()+'> <%= room.number %> 호 </div>
-					</td>	
-		
+					</td>
+
 					<!-- Modal -->
 					<div class="modal fade" id="Modal<%=room.number%>" tabindex="-1" role="dialog" aria-labelledby="label<%=room.number%>" aria-hidden="true">
 							<div class="modal-dialog" role="document">
 							  <div class="modal-content">
 								<div class="modal-header">
-								  <h5 class="modal-title" id="label<%=room.number%>"><%=room.number%>호</h5>
+								  <h5 class="modal-title">HOUSEKEEPING STATE</h5>
 								  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 									<span aria-hidden="true">&times;</span>
 								  </button>
 								</div>
 								<div class="modal-body">
-										<p>TYPE: <%= room.type %></p>
-										<p>PRICE: <%= room.price %></p>
+									<div class="checklist">
+								<div class="_clean">
+									<input type="checkbox" id="c1" name="chkBox" value="clean"/>
+									<label for="c1"><span>Clean</span></label>
+
+								</div>
+								<div class="_amenity">
+									<input type="checkbox" id="c2" name="chkBox" value="amenity"/>
+									<label for="c2"><span>Amenity</span></label>
+
+								</div>
+								<div class="_bedding">
+									<input type="checkbox" id="c3" name="chkBox" value="bedding"/>
+									<label for="c3"><span>Bedding</span></label>
+
+								</div>
 								</div>
 								<div class="modal-footer">
+									<!--
 								  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-								  <a class="btn btn-primary" href="/rooms/edit/<%= room.number %>" role="button">Edit</a>
-								  
+								  <a class="btn btn-primary" href="/rooms/edit/<%= room.number %>" role="button">Edit</a>-->
+
 									<!-- <a href='/rooms/edit/<%= room.number %>'>Edit</a> &nbsp;							 -->
-									<form method="post" action="/rooms/delete/<%= room.number %>" style="float:right">
+									<!--<form method="post" action="/rooms/delete/<%= room.number %>" style="float:right">
 										<input type="submit" name="delete" value='Delete' onClick="return confirm('Are you sure you want to delete?')" />
 										<input type="hidden" name="_method" value="DELETE" />
-									</form>
-									
+									</form>-->
+
 								</div>
 							  </div>
 							</div>
-						  </div>			
+						  </div>
 					<% if (i % 8 == 7) { %>
-					</tr>				
+					</tr>
 					<% } %>
 					<% i += 1; %>
 			<% }) %>
@@ -99,7 +114,7 @@ including header content which is common for all pages
 		</table>
 
 		<a href="/rooms/add" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">ADD</a>
-		
+
 	</div>
 
 	<!-- Scripts -->
