@@ -1,7 +1,7 @@
 <!--
 including header content which is common for all pages
 -->
-<%- include ../layouts/header.ejs %>	
+<%- include ../layouts/header.ejs %>
 
 <% if (messages.error) { %>
 	<p style="color:red"><%- messages.error %></p>
@@ -13,6 +13,7 @@ including header content which is common for all pages
 
 <form action="/customers/add" method="post" name="form1">
 	<table width="25%" border="0">
+<<<<<<< HEAD
 		<tr> 
 			<td>ID</td>
 			<td><input type="text" name="id" value="<%= id %>" /></td>
@@ -22,30 +23,49 @@ including header content which is common for all pages
 			<td><input type="text" name="password" value="<%= password %>" /></td>
 		</tr>
 		<tr> 
+=======
+		<tr>
+>>>>>>> 79cfb3f2124a2756b7f245bfb0be8982e0d5af49
 			<td>Name</td>
 			<td><input type="text" name="name"  value="<%= name %>" /></td>
 		</tr>
-		<tr> 
+		<tr>
 			<td>Car</td>
-			<td><input type="text" name="car" value="<%= car %>" /></td>
+			<td>
+				<input type="radio" id="car1" name="car" value=1 />
+				<label for="car1"><span>O</span></label>
+				<input type="radio" id="car2" name="car" value=0 />
+				<label for="car2"><span>X</span></label>
+			</td>
 		</tr>
-		<tr> 
+		<tr>
 			<td>Nation</td>
 			<td><input type="text" name="nation" value="<%= nation %>" /></td>
 		</tr>
-		<tr> 
+		<tr>
 			<td>Phone</td>
 			<td><input type="text" name="phone" value="<%= phone %>" /></td>
 		</tr>
-		<tr> 
+		<tr>
 			<td>Email</td>
 			<td><input type="text" name="email" value="<%= email %>" /></td>
 		</tr>
-		<tr> 
+		<tr>
 			<td></td>
 			<td><input type="submit" name="Submit" value="Add" /></td>
 		</tr>
 	</table>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#car1').click(function() {
+				car = 1;
+			})
+
+			$('#car2').click(function() {
+				car = 0;
+			})
+		})
+	</script>
 </form>
 
 <!--
