@@ -1,7 +1,7 @@
 <!--
 including header content which is common for all pages
 -->
-<%- include ../layouts/header.ejs %>
+<%- include ../layouts/header.ejs %>	
 
 <% if (messages.error) { %>
 	<p style="color:red"><%- messages.error %></p>
@@ -25,28 +25,30 @@ including header content which is common for all pages
 				<% numbers.forEach(function(room_number){ %>
 					<option value='<%= room_number.number %>'><%= room_number.number %></option>
 				<% }) %>
-			<% } %>
+			<% } %>	
 	</select>
-
+	
 	<br/>
 	Customer Name
-
+	
 	<select name="customer" >
 			<% if (customers) { %>
 				<% customers.forEach(function(customer){ %>
 					<option value='<%= customer.id %>'>id:<%= customer.id%> name: <%= customer.name %></option>
-
+					
 				<% }) %>
-			<% } %>
+			<% } %>	
 	</select>
 	<br/>
-
+	
 	<br/>
 	Check In
 	<input type="checkbox" name="checkIn" value="true"/>
-
+	Check Out
+	<input type="checkbox" name="checkOut" value="true"/>
+	
 	<input type="submit" name="Submit" value="Add" />
-
+		
 </form>
 
 

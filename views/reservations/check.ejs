@@ -1,7 +1,7 @@
 <!--
 including header content which is common for all pages
 -->
-<%- include ../layouts/header.ejs %>
+<%- include ../layouts/header.ejs %>	
 
 <% if (messages.error) { %>
 	<p style="color:red"><%- messages.error %></p>
@@ -18,7 +18,7 @@ including header content which is common for all pages
 	<br/>
 	Out Date
 	<input type="datetime-local" name="outdate" value="<%= outdate %>" />
-<br/>
+</br>
 	<input type="submit" name="Submit" value="check" />
 
 </form>

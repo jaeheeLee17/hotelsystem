@@ -9,7 +9,7 @@ including header content which is common for all pages
 
 <% if (messages.success) { %>
 	<p style="color:green"><%- messages.success %></p>
-<% } %>
+<% } %>			
 
 <!-- Main -->
 <section id="main" class="wrapper">
@@ -41,10 +41,10 @@ including header content which is common for all pages
 									<table class="_room" role="presentation">
 										<tbody id="_tableBody">
 											<% var i = 0; %>
-
+											
 											<% if (data) {%>
 											<% data.forEach(function(room) { %>
-
+												
 											<%  if(i % 8 == 0) { %>
 											<tr >
 												<th class="floor" style="width:70px;height:70px;"><%= room.floor %>F</th>
@@ -60,11 +60,12 @@ including header content which is common for all pages
 													<%  } %>
 												<% }); %>
 												<td class="<%=color%>" id="<%=room.number%>" role="button" tabindex="0" style="width:70px;height:70px;" >
-												<%=room.number%>호<br/></td>
-
+												<%=room.number%>호</br></td>
+												
 									<div id="<%= room.number %>" class="modal">
 										<div class="modal-content">
 											<div class="modal-title">
+
 												<span class="close">&times;</span>
 												<h2>Housekeeing State</h2>
 											</div>
@@ -74,43 +75,48 @@ including header content which is common for all pages
 													<input type="text" name="number" value="<%= room.number %>" />
 													floor
 													<input type="text" name="floor" value="<%= room.floor %>" />
-													<br/>
+													</br>
 													Clean
 													<input type="checkbox" name="clean" value="true"  <%= room.clean ? "checked" : "" %> />
 													linen
 													<input type="checkbox" name="linen" value="true"  <%= room.linen ? "checked" : "" %> />
 													amenity
 													<input type="checkbox" name="amenity" value="true"  <%= room.amenity ? "checked" : "" %> />
-													<br/>
+													</br>
 													order_take
 													<input type="text" name="order_take" value="<%= room.order_take %>" />
-													<br/>
-
+													</br>
+													
 													<input type="hidden" name="_method" value="PUT" />
 													<span><button id="confirm">확인</button></span>
 												</form>
-
+											
+												
 
 											</div>
 											<div>
-
+												
 											</div>
 										</div>
+
 									</div>
 
 
+												
+
+												
 												<% if (i % 8 == 7) { %>
 													</tr>
 												<% } %>
 												<% i = i + 1 %>
 												<%});%>
 												<% } %>
-
+												
 												<script>$("td").click(function(event){modalSet();})</script>
 										</tbody>
 									</table>
-
-
+									
+								
 
 								</div>
 							</div>
@@ -125,7 +131,7 @@ including header content which is common for all pages
 <a href="/rooms/add" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">ADD</a>
 
 
-
+	
 
 
 
