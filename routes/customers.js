@@ -60,7 +60,7 @@ app.post('/add', function(req, res, next){
 			id: req.sanitize('id').escape().trim(),
 			password: req.sanitize('password').escape().trim(),
 			name: req.sanitize('name').escape().trim(),
-			car: req.body.car,
+			car: req.body.car ? true: false,
 			nation: req.sanitize('nation').escape().trim(),
 			phone: req.sanitize('phone').escape().trim(),
 			email: req.sanitize('email').escape().trim()
@@ -113,13 +113,15 @@ app.post('/add', function(req, res, next){
 		 * because req.param('name') is deprecated
 		 */
         res.render('customers/add', {
-            title: 'Add New Customer',
-						name: user.name,
-						car: user.car,
-						nation: user.nation,
-						phone: user.phone,
-						email: user.email
-        })
+			title: 'Add New Customer',
+			id: user.id,
+			password: user.password,
+			name: user.name,
+			car: user.car,
+			nation: user.nation,
+			phone: user.phone,
+			email: user.email
+		})
     }
 })
 
@@ -175,7 +177,7 @@ app.put('/edit/(:id)', function(req, res, next) {
 			id: req.sanitize('id').escape().trim(),
 			password: req.sanitize('password').escape().trim(),
 			name: req.sanitize('name').escape().trim(),
-			car: req.body.car,
+			car: req.body.car ? true: false,
 			nation: req.sanitize('nation').escape().trim(),
 			phone: req.sanitize('phone').escape().trim(),
 			email: req.sanitize('email').escape().trim()

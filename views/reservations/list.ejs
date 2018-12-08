@@ -9,7 +9,7 @@ including header content which is common for all pages
 
 <% if (messages.success) { %>
 	<p style="color:green"><%- messages.success %></p>
-<% } %>
+<% } %>	
 
 <table width='80%' border=0>
 
@@ -22,21 +22,21 @@ including header content which is common for all pages
 		<th>CheckIn</th>
 		<th>CheckOut</th>
 	</tr>
-
+	
 	<% if (data) { %>
 	<% data.forEach(function(reserve){ %>
 		<tr>
-			<td><%= reserve.code %></td>
+			<td><%=reserve.code %></td>
 			<td><%= reserve.number %></td>
 			<td><a href='/customers/edit/<%=reserve.id %>'><%= reserve.name %></a></td>
 			<td><%= reserve.indate %></td>
 			<td><%= reserve.outdate %></td>
 			<td><input id="opt1" type="checkbox" name="check1" <%= reserve.checkIn ? "checked" : "" %> /></td>
 			<td><input id="opt1" type="checkbox" name="check2" <%= reserve.checkOut ? "checked" : "" %> /></td>
-
+	
 			<td>
 				<div style="float:left">
-					<a href='/reservations/edit/<%= reserve.code %>'>Edit</a> &nbsp;
+					<a href='/reservations/edit/<%= reserve.code %>'>Edit</a> &nbsp;							
 					<form method="post" action="/reservations/delete/<%= reserve.code %>" style="float:right">
 						<input type="submit" name="delete" value='Delete' onClick="return confirm('Are you sure you want to delete?')" />
 						<input type="hidden" name="_method" value="DELETE" />
