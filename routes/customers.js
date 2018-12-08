@@ -30,7 +30,11 @@ app.get('/',isAuthenticated, function(req, res, next) {
 })
 
 // SHOW ADD USER FORM
+<<<<<<< HEAD
 app.get('/add',isAuthenticated, function(req, res, next){	
+=======
+app.get('/add',isAuthenticated, function(req, res, next){
+>>>>>>> 4f3048115726cc86845e0d471ab5fc7da7778508
 	// render to views/user/add.ejs
 	res.render('customers/add', {
 		title: 'Add New Customer',
@@ -45,7 +49,11 @@ app.get('/add',isAuthenticated, function(req, res, next){
 })
 
 // ADD NEW USER POST ACTION
+<<<<<<< HEAD
 app.post('/add',isAuthenticated, function(req, res, next){	
+=======
+app.post('/add',isAuthenticated, function(req, res, next){
+>>>>>>> 4f3048115726cc86845e0d471ab5fc7da7778508
 	req.assert('name', 'Name is required').notEmpty()           //Validate name
     // req.assert('email', 'A valid email is required').isEmail()  //Validate email
 
