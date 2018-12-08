@@ -1,7 +1,7 @@
 <!--
 including header content which is common for all pages
 -->
-<%- include layouts/header.ejs %>	
+<%- include layouts_user/header.ejs %>	
 
 <!--
 including footer content which is common for all pages
@@ -10,7 +10,7 @@ including footer content which is common for all pages
 <!-- Banner -->
 			<section id="banner" role = "button">
 				<div class="inner">
-					<h1>Seven Hotel Management System</h1>
+					<h1>Welcome to Seven Hotel</h1>
 				</div>
 				<video autoplay loop muted playsinline src="images/banner.mp4"></video>
 			</section>
@@ -33,23 +33,12 @@ including footer content which is common for all pages
 								</p>
 							</div>
 						</section>
-						<section>
-							<div class="content">
-								<header>
-									<a href="/rooms" class="icon fa-hotel"><span class="label">Icon</span></a>
-									<h3>실시간 객실 정보</h3>
-								</header>
-								<p>
-
-								</p>
-							</div>
-						</section>
 
 						<section>
 							<div class="content">
 								<header>
-									<a href="/customers" class="icon fa-line-chart"><span class="label">Icon</span></a>
-									<h3>고객, 예약 조회</h3>
+									<a href="/rooms" class="icon fa-line-chart"><span class="label">Icon</span></a>
+									<h3>예약 조회</h3>
 								</header>
 								<p>
 
@@ -61,4 +50,4 @@ including footer content which is common for all pages
 				</div>
 			</section>
 
-<%- include layouts/footer.ejs %>
+<%- include layouts_user/footer.ejs %>
