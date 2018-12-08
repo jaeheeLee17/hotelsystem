@@ -31,7 +31,6 @@ app.get('/',isAuthenticated, function(req, res, next) {
 
 // SHOW ADD USER FORM
 app.get('/add',isAuthenticated, function(req, res, next){
-app.get('/add',isAuthenticated, function(req, res, next){
 	// render to views/user/add.ejs
 	res.render('customers/add', {
 		title: 'Add New Customer',
@@ -46,7 +45,6 @@ app.get('/add',isAuthenticated, function(req, res, next){
 })
 
 // ADD NEW USER POST ACTION
-app.post('/add',isAuthenticated, function(req, res, next){
 app.post('/add',isAuthenticated, function(req, res, next){
 	req.assert('name', 'Name is required').notEmpty()           //Validate name
     // req.assert('email', 'A valid email is required').isEmail()  //Validate email
@@ -95,16 +93,7 @@ app.post('/add',isAuthenticated, function(req, res, next){
 					req.flash('success', 'Data added successfully!')
 
 					// render to views/user/add.ejs
-					res.render('customers/add', {
-						title: 'Add New Customer',
-						id: '',
-						password: '',
-						name: '',
-						car: '',
-						nation: '',
-						phone: '',
-						email: ''
-					})
+					res.redirect('/reservations/add')
 				}
 			})
 		})

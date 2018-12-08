@@ -1,7 +1,7 @@
 <!--
 including header content which is common for all pages
 -->
-<%- include ../layouts/header.ejs %>	
+<%- include ../layouts/header.ejs %>
 
 <% if (messages.error) { %>
 	<p style="color:red"><%- messages.error %></p>
@@ -10,8 +10,8 @@ including header content which is common for all pages
 <% if (messages.success) { %>
 	<p style="color:green"><%- messages.success %></p>
 <% } %>
-
-<form action="/reservations/add" method="post" name="form2">
+<div id="multiple" class="article">
+	<form action="/reservations/add" method="post" name="form2">
 
 	In Date
 	<input type="datetime-local" name="indate" value="<%= indate %>" />
@@ -19,38 +19,71 @@ including header content which is common for all pages
 	Out Date
 	<input type="datetime-local" name="outdate" value="<%= outdate %>" />
 	<br/>
-	Room Number
-	<select name="number">
-			<% if (numbers) { %>
-				<% numbers.forEach(function(room_number){ %>
-					<option value='<%= room_number.number %>'><%= room_number.number %></option>
-				<% }) %>
-			<% } %>	
-	</select>
-	
-	<br/>
+	<div>
+	<h2>예약 가능한 방</h2>
+	<table>
+		<thead>
+			<td>Room_Type</td>
+			<td>Room_Number</td>
+			<td>Price</td>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<form name="type">
+							<% if (numbers) { %>
+								<% numbers.forEach(function(room){ %>
+									<p><%= room.type %></p>
+									<!--<option value='<%= room.type %>'><%= room.type %></option>-->
+								<% }) %>
+							<% } %>
+					</form>
+				</td>
+				<td>
+					<form name="number">
+							<% if (numbers) { %>
+								<% numbers.forEach(function(room){ %>
+									<p><%= room.number %></p>
+									<!--<option value='<%= room.number %>'><%= room.number %>호</option>-->
+								<% }) %>
+							<% } %>
+					</form>
+				</td>
+				<td>
+					<form name="price">
+							<% if (numbers) { %>
+								<% numbers.forEach(function(room_type){ %>
+									<p><%= room_type.price %>    <a href="/customers/add"><input type ="button"value="선택"></a></p>
+									<!--<option value='<%= room_type.price %>'><%= room_type.price %></option>-->
+								<% }) %>
+							<% } %>
+					</form>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 	Customer Name
-	
+
 	<select name="customer" >
 			<% if (customers) { %>
 				<% customers.forEach(function(customer){ %>
 					<option value='<%= customer.id %>'>id:<%= customer.id%> name: <%= customer.name %></option>
-					
+
 				<% }) %>
-			<% } %>	
+			<% } %>
 	</select>
 	<br/>
-	
+
 	<br/>
 	Check In
 	<input type="checkbox" name="checkIn" value="true"/>
 	Check Out
 	<input type="checkbox" name="checkOut" value="true"/>
-	
-	<input type="submit" name="Submit" value="Add" />
-		
-</form>
+			<p><a href="/reservations/check"><input type="button"value="이전단계"></a><input type="submit" name="Submit" value="예약"></p>
+</div>
 
+
+</form>
 
 
 <!--

@@ -2,13 +2,8 @@ var moment = require('moment')
 var datetime = require('date-and-time');
 var express = require('express')
 var app = express()
-var isAuthenticated = function (req, res, next) {
-	if (req.isAuthenticated())
-	  return next();
-	res.redirect('/login');
-  };
 
-app.get('/',isAuthenticated, function(req, res, next) {
+app.get('/', function(req, res, next) {
 	req.getConnection(function(error, conn) {
 		conn.query("select code, number,id, name, date_format(indate, '%m월 %d일 %h %p') as indate, date_format(outdate, '%m월 %d일 %h %p') as outdate, checkIn, checkOut from reservation natural join customer order by indate",function(err, rows, fields) {
 			if (err) {
@@ -28,10 +23,10 @@ app.get('/',isAuthenticated, function(req, res, next) {
 })
 
 
-app.get('/add', isAuthenticated,function(req, res, next){
+app.get('/add', function(req, res, next){
 
 	req.getConnection(function(error, conn) {
-		conn.query('select * from room order by number',function(err, numbers, fields) {
+		conn.query('select number, type, price from room natural join room_type order by number',function(err, numbers, types, prices, fields) {
 			if (err) throw err;
 			conn.query('select * from customer ',function(err, customers, fields) {
 				if (err) throw err;
@@ -39,6 +34,8 @@ app.get('/add', isAuthenticated,function(req, res, next){
 				res.render('reservations/add', {
 					title: 'New Reservation',
 					numbers: numbers,
+					types: types,
+					prices: prices,
 					customers: customers,
 					indate: datetime.format(now, 'YYYY-MM-DDTHH:mm:ss'),
 					outdate: datetime.format(datetime.addDays(now, 1), 'YYYY-MM-DDTHH:mm:ss')
@@ -48,10 +45,10 @@ app.get('/add', isAuthenticated,function(req, res, next){
 	})
 })
 
-app.get('/check',isAuthenticated, function(req, res, next){
+app.get('/check', function(req, res, next){
 
 	req.getConnection(function(error, conn) {
-		conn.query('select * from room order by number',function(err, numbers, fields) {
+		conn.query('select number, type, price from room natural join room_type order by number',function(err, numbers, types, prices, fields) {
 			if (err) throw err;
 			conn.query('select * from customer ',function(err, customers, fields) {
 				if (err) throw err;
@@ -66,7 +63,7 @@ app.get('/check',isAuthenticated, function(req, res, next){
 	})
 })
 
-app.post('/check',isAuthenticated, function(req, res, next) {
+app.post('/check', function(req, res, next) {
 	// req.assert('number', 'Room number is required').notEmpty()
 	// req.assert('type', 'Room type is required').notEmpty()
 
@@ -77,19 +74,21 @@ app.post('/check',isAuthenticated, function(req, res, next) {
 
 		var indate = moment(req.body.indate).format('YYYY-MM-DD HH:mm:ss');
 		var outdate = moment(req.body.outdate).format('YYYY-MM-DD HH:mm:ss');
-		var sql = "select number from room where number not in (select number from reservation where indate <= '" + outdate + "' and outdate >= '" + indate +"') order by number";
+		var sql = "select number, type, price from room natural join room_type where number not in (select number from reservation where indate <= '" + outdate + "' and outdate >= '" + indate +"') order by number";
 		console.log("post check")
 		console.log(indate)
 		console.log(outdate)
 
 		req.getConnection(function(error, conn) {
-			conn.query(sql, function(err, numbers) {
+			conn.query(sql, function(err, numbers, types, prices, fields) {
 				if (err) throw err;
 					conn.query('select * from customer ',function(err, customers, fields) {
 						if (err) throw err;
 						res.render('reservations/add', {
 							title: 'New Reservation',
 							numbers: numbers,
+							types: types,
+							prices: prices,
 							customers: customers,
 							indate: req.body.indate,
 							outdate: req.body.outdate
@@ -115,7 +114,7 @@ app.post('/check',isAuthenticated, function(req, res, next) {
 
 
 
-app.post('/add',isAuthenticated, function(req, res, next){
+app.post('/add', function(req, res, next){
 	req.assert('number', 'Room number is required').notEmpty()
 	// req.assert('type', 'Room type is required').notEmpty()
 
@@ -145,13 +144,15 @@ app.post('/add',isAuthenticated, function(req, res, next){
 				if (err) {
 					req.flash('error', err)
 					console.log(err);
-					conn.query('select * from room order by number',function(err, numbers, fields) {
+					conn.query('select number, type, price from room natural join room_type order by number',function(err, numbers, types, prices, fields) {
 						if (err) throw err;
 						conn.query('select * from customer ',function(err, customers, fields) {
 							if (err) throw err;
 							res.render('reservations/add', {
 								title: 'New Reservation',
 								numbers: numbers,
+								types: types,
+								prices: prices,
 								customers: customers,
 								indate: datetime.format(now, 'YYYY-MM-DDTHH:mm:ss'),
 								outdate: datetime.format(datetime.addDays(now, 1), 'YYYY-MM-DDTHH:mm:ss')
@@ -198,10 +199,10 @@ app.post('/add',isAuthenticated, function(req, res, next){
 })
 
 
-app.get('/edit/(:code)',isAuthenticated, function(req, res, next){
+app.get('/edit/(:code)', function(req, res, next){
 	req.getConnection(function(error, conn) {
 		conn.query('SELECT * FROM reservation WHERE code = ' + req.params.code, function(err, rows, fields) {
-			if(err) throw err;
+			if(err) throw err
 
 			if (rows.length <= 0) {
 				req.flash('error', 'Reservation not found with code = ' + req.params.code)
@@ -236,7 +237,7 @@ app.get('/edit/(:code)',isAuthenticated, function(req, res, next){
 })
 
 
-app.put('/edit/(:code)',isAuthenticated, function(req, res, next) {
+app.put('/edit/(:code)', function(req, res, next) {
 	req.assert('number', 'Room number is required').notEmpty()
 	// req.assert('type', 'Room type is required').notEmpty()
 
@@ -303,7 +304,7 @@ app.put('/edit/(:code)',isAuthenticated, function(req, res, next) {
 })
 
 
-app.delete('/delete/(:code)',isAuthenticated, function(req, res, next) {
+app.delete('/delete/(:code)', function(req, res, next) {
 	var reserve = { code: req.params.code }
 
 	req.getConnection(function(error, conn) {

@@ -10,7 +10,7 @@ including header content which is common for all pages
 <% if (messages.success) { %>
 	<p style="color:green"><%- messages.success %></p>
 <% } %>
-
+<div>
 <form action="/reservations/check" method="post" name="form1">
 
 	In Date
@@ -19,11 +19,11 @@ including header content which is common for all pages
 	Out Date
 	<input type="datetime-local" name="outdate" value="<%= outdate %>" />
 </br>
-	<input type="submit" name="Submit" value="check" />
+	<p><input type="submit" name="Submit" value="check" /></p>
 
 </form>
 
-
+</div>
 
 
 <!--

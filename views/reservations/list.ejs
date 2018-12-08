@@ -10,22 +10,25 @@ including header content which is common for all pages
 <% if (messages.success) { %>
 	<p style="color:green"><%- messages.success %></p>
 <% } %>	
-
-<table width='80%' border=0>
+	<div id="multiple" class="article">
+	<table width='80%' border=0>
 
 	<tr style='text-align:left; background-color:#CCC'>
-		<th>Code</th>
-		<th>Room Number</th>
-		<th>Customer Name</th>
-		<th>In Date</th>
-		<th>Out Date</th>
-		<th>CheckIn</th>
-		<th>CheckOut</th>
+		<thead>	
+			<th>Code</th>
+			<th>Room Number</th>
+			<th>Customer Name</th>
+			<th>In Date</th>
+			<th>Out Date</th>
+			<th>CheckIn</th>
+			<th>CheckOut</th>
+		</thead>
 	</tr>
 	
 	<% if (data) { %>
 	<% data.forEach(function(reserve){ %>
 		<tr>
+			<tbody>
 			<td><%=reserve.code %></td>
 			<td><%= reserve.number %></td>
 			<td><a href='/customers/edit/<%=reserve.id %>'><%= reserve.name %></a></td>
@@ -43,6 +46,7 @@ including header content which is common for all pages
 					</form>
 				</div>
 			</td>
+			</tbody>
 		</tr>
 	<% }) %>
 	<% } %>
@@ -50,7 +54,7 @@ including header content which is common for all pages
 </table>
 
 <a href="/reservations/check" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">ADD</a>
-
+</div>
 <!--
 including footer content which is common for all pages
 -->
