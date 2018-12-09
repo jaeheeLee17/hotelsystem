@@ -2,8 +2,13 @@ var moment = require('moment')
 var datetime = require('date-and-time');
 var express = require('express')
 var app = express()
+var isAuthenticated = function (req, res, next) {
+	if (req.isAuthenticated())
+	  return next();
+	res.redirect('/login');
+  };
 
-app.get('/', function(req, res, next) {
+app.get('/',isAuthenticated, function(req, res, next) {
 	req.getConnection(function(error, conn) {
 		var user = req.session.passport.user.id;
 		var sql = "select code, number,id, name, date_format(indate, '%m월 %d일') as indate, date_format(outdate, '%m월 %d일 ') as outdate, checkIn, checkOut, reservedate from reservation natural join customer order by indate";
@@ -29,17 +34,17 @@ app.get('/', function(req, res, next) {
 						data: rows
 					})
 				}
-
+				
 			}
 		})
 	})
 })
 
 
-app.get('/add', function(req, res, next){
+app.get('/add', isAuthenticated,function(req, res, next){
 
 	req.getConnection(function(error, conn) {
-		conn.query('select number, type, price from room natural join room_type order by number',function(err, numbers, types, prices, fields) {
+		conn.query('select * from room order by number',function(err, numbers, fields) {
 			if (err) throw err;
 			var user = req.session.passport.user.id;
 			var sql = "select * from customer"
@@ -52,8 +57,6 @@ app.get('/add', function(req, res, next){
 				res.render('reservations/add', {
 					title: 'New Reservation',
 					numbers: numbers,
-					types: types,
-					prices: prices,
 					customers: customers,
 					indate: datetime.format(now, 'YYYY-MM-DD'),
 					outdate: datetime.format(datetime.addDays(now, 1), 'YYYY-MM-DD')
@@ -63,10 +66,10 @@ app.get('/add', function(req, res, next){
 	})
 })
 
-app.get('/check', function(req, res, next){
+app.get('/check',isAuthenticated, function(req, res, next){
 
 	req.getConnection(function(error, conn) {
-		conn.query('select number, type, price from room natural join room_type order by number',function(err, numbers, types, prices, fields) {
+		conn.query('select * from room order by number',function(err, numbers, fields) {
 			if (err) throw err;
 			var user = req.session.passport.user.id;
 			var sql = "select * from customer"
@@ -76,7 +79,7 @@ app.get('/check', function(req, res, next){
 			conn.query(sql,[user],function(err, customers, fields) {
 				if (err) throw err;
 				var now = new Date();
-
+				
 				if(req.session.passport.user.tag == "customer") {
 					res.render('reservations/check_user', {
 						title: 'New Reservation',
@@ -95,7 +98,7 @@ app.get('/check', function(req, res, next){
 	})
 })
 
-app.post('/check', function(req, res, next) {
+app.post('/check',isAuthenticated, function(req, res, next) {
 	// req.assert('number', 'Room number is required').notEmpty()
 	// req.assert('type', 'Room type is required').notEmpty()
 
@@ -112,7 +115,7 @@ app.post('/check', function(req, res, next) {
 		console.log(outdate)
 
 		req.getConnection(function(error, conn) {
-			conn.query(sql, function(err, numbers, fields) {
+			conn.query(sql, function(err, numbers) {
 				if (err) throw err;
 				var user = req.session.passport.user.id;
 				var sql = "select * from customer"
@@ -138,7 +141,7 @@ app.post('/check', function(req, res, next) {
 								outdate: req.body.outdate
 							})
 						}
-
+						
 					})
 			})
 		})
@@ -160,20 +163,20 @@ app.post('/check', function(req, res, next) {
 
 
 
-app.post('/add', function(req, res, next){
+app.post('/add',isAuthenticated, function(req, res, next){
 	req.assert('number', 'Room number is required').notEmpty()
 	// req.assert('type', 'Room type is required').notEmpty()
 
 
 	var errors = req.validationErrors()
-
+	
 
     if( !errors ) {
 
 		var now = new Date();
 		var sql = "insert into reservation set ?";
 		var params = {
-
+			
 			number: req.body.number,
 			indate: moment(req.body.indate).format('YYYY-MM-DD'),
 			outdate: moment(req.body.outdate).format('YYYY-MM-DD'),
@@ -181,7 +184,7 @@ app.post('/add', function(req, res, next){
 			checkOut: req.body.checkOut ? true : false,
 			reservedate: now
 		};
-
+		
 		if(req.session.passport.user.tag == "customer") {
 			params.id = req.session.passport.user.id;
 		} else {
@@ -194,12 +197,12 @@ app.post('/add', function(req, res, next){
 
 		req.getConnection(function(error, conn) {
 			conn.query(sql, params, function(err, result) {
-
+				
 				if (err) {
 					req.flash('error', err)
 					console.log(err);
 					res.redirect('/reservations');
-
+					
 
 				} else {
 
@@ -240,10 +243,10 @@ app.post('/add', function(req, res, next){
 })
 
 
-app.get('/edit/(:code)', function(req, res, next){
+app.get('/edit/(:code)',isAuthenticated, function(req, res, next){
 	req.getConnection(function(error, conn) {
 		conn.query('SELECT * FROM reservation WHERE code = ' + req.params.code, function(err, rows, fields) {
-			if(err) throw err
+			if(err) throw err;
 
 			if (rows.length <= 0) {
 				req.flash('error', 'Reservation not found with code = ' + req.params.code)
@@ -284,7 +287,7 @@ app.get('/edit/(:code)', function(req, res, next){
 									checkOuted: rows[0].checkOut
 								})
 							}
-
+							
 						})
 					})
 				})
@@ -294,7 +297,7 @@ app.get('/edit/(:code)', function(req, res, next){
 })
 
 
-app.put('/edit/(:code)', function(req, res, next) {
+app.put('/edit/(:code)',isAuthenticated, function(req, res, next) {
 	req.assert('number', 'Room number is required').notEmpty()
 	// req.assert('type', 'Room type is required').notEmpty()
 
@@ -353,7 +356,7 @@ app.put('/edit/(:code)', function(req, res, next) {
 									checkOuted: req.body.checkOut
 								})
 							}
-
+							
 						})
 					})
 				}
@@ -377,7 +380,7 @@ app.put('/edit/(:code)', function(req, res, next) {
 })
 
 
-app.delete('/delete/(:code)', function(req, res, next) {
+app.delete('/delete/(:code)',isAuthenticated, function(req, res, next) {
 	var reserve = { code: req.params.code }
 
 	req.getConnection(function(error, conn) {
