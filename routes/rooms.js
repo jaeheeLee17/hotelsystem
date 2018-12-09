@@ -10,7 +10,7 @@ var isAuthenticated = function (req, res, next) {
 
 app.get('/',isAuthenticated, function(req, res, next) {
 	req.getConnection(function(error, conn) {
-		conn.query('SELECT * FROM room natural left outer join housekeeping ORDER BY floor desc, number ',function(err, rows, fields) {
+		conn.query('SELECT * FROM room ORDER BY floor desc, number ',function(err, rows, fields) {
 			if (err) {
 				req.flash('error', err)
 				res.render('rooms/list', {
@@ -21,7 +21,7 @@ app.get('/',isAuthenticated, function(req, res, next) {
 				var now = new Date();
 				var indate = moment(now).format('YYYY-MM-DD HH:mm:ss');
 				var outdate = indate;
-				var sql = "select * from reservation where indate <= '" +indate+ "' and outdate >= '" + indate +"' ";
+				var sql = "select * from reservation natural join customer where indate <= '" +indate+ "' and outdate >= '" + indate +"' ";
 				
 				conn.query(sql, function(err, reserved) {
 					if (err) {
@@ -30,12 +30,28 @@ app.get('/',isAuthenticated, function(req, res, next) {
 						res.redirect('/')
 						
 					} else {
-						res.render('rooms/list', {
-							title: 'Room List', 
-							data: rows,
-							reserved: reserved,
-							// date: datetime.format(now, 'YYYY-MM-DDTHH:mm:ss')
+						var sql = "select * from staff right join task on staff.id = task.id"
+						conn.query(sql, function(err, tasks) {
+							if (err) {
+								res.redirect('/')
+							} else {
+								var sql = "select * from staff"
+						        conn.query(sql, function(err, staffs) {
+                                    if (err) {
+                                        res.redirect('/')
+                                    } else {
+                                        res.render('rooms/list', {
+                                            title: 'Room List', 
+                                            data: rows,
+                                            reserved: reserved,
+                                            staffs: staffs,
+                                            tasks: tasks
+                                        })
+                                    }
+                                })
+							}
 						})
+						
 					}
 
 				})
@@ -155,9 +171,7 @@ app.put('/edit/(:number)',isAuthenticated, function(req, res, next) {
     if( !errors ) {
 		var room = {
 			number: req.sanitize('number').escape().trim(),
-			floor: req.sanitize('floor').escape().trim()
-		}
-		var housekeeping = {
+			floor: req.sanitize('floor').escape().trim(),
 			clean: req.body.clean ? true: false,
 			linen: req.body.linen ? true: false,
 			amenity: req.body.amenity ? true: false,
@@ -173,19 +187,39 @@ app.put('/edit/(:number)',isAuthenticated, function(req, res, next) {
 					res.redirect('/rooms')
 				} else {
 
-					conn.query('UPDATE housekeeping SET ? WHERE number = ' + req.params.number, housekeeping, function(err, result) {
+					var task = {
+						number: req.params.number,
+						id: req.body.id
+					}
+					
+					
+					conn.query('insert into task SET ? ', task, function(err, result) {
 						//if(err) throw err
 						if (err) {
-							req.flash('error', err)
-							res.redirect('/rooms')
+							conn.query("update task set ? where number = '"+task.number+"'", task, function(err, rows) {
+								if (err) {
+									req.flash('error', err)
+									res.redirect('/rooms')
+								} else {
+									req.flash('success', 'Data updated successfully!')
+									res.redirect('/rooms')
+								}
+							})
+							
 						} else {
 							req.flash('success', 'Data updated successfully!')
 							res.redirect('/rooms')
+							
 						}
 					})
+					
+					
 				}
 			})
 		})
+
+		
+		
 	}
 	else {   //Display errors to user
 		var error_msg = ''
@@ -222,6 +256,9 @@ app.delete('/delete/(:number)',isAuthenticated, function(req, res, next) {
 		})
 	})
 })
+
+
+
 
 
 
