@@ -80,15 +80,13 @@ app.post('/check', function(req, res, next) {
 		console.log(outdate)
 
 		req.getConnection(function(error, conn) {
-			conn.query(sql, function(err, numbers, types, prices, fields) {
+			conn.query(sql, function(err, numbers, fields) {
 				if (err) throw err;
 					conn.query('select * from customer ',function(err, customers, fields) {
 						if (err) throw err;
 						res.render('reservations/add', {
 							title: 'New Reservation',
 							numbers: numbers,
-							types: types,
-							prices: prices,
 							customers: customers,
 							indate: req.body.indate,
 							outdate: req.body.outdate
