@@ -9,15 +9,15 @@ including header content which is common for all pages
 
 <% if (messages.success) { %>
 	<p style="color:green"><%- messages.success %></p>
-<% } %>	
+<% } %>
 
 <!-- Main -->
 	<section id="main" class="wrapper">
 		<div class="inner">
 			<div class="content" style="TEXT-ALIGN: center">
-				<header >
+				<header>
 					<h10>
-					
+
 
 
 						<style>
@@ -76,12 +76,12 @@ including header content which is common for all pages
 							function myFunction() {
 								var x = document.getElementById("text10").value;
 								var y = document.getElementById("selectBox");
-							    alert('선택된 옵션 value 값=' + y.options[y.selectedIndex].value + x);   
-							    
+							    alert('선택된 옵션 value 값=' + y.options[y.selectedIndex].value + x);
+
 
 							}
 						</script>
-						
+
 
 
 
@@ -89,49 +89,50 @@ including header content which is common for all pages
 						<div id="container">
 
 							<div id="input-form">
-								
 
 
-							
+
+
 							</div>
 							<table id="user-table">
-	<thead>
-	<tr ><th>ID</th>
-		<th>Name</th>
-		<th>Gender</th>
-		<th>Birthday</th>
-	</tr>
-	</thead>
-	
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Name</th>
+										<th>Gender</th>
+										<th>Birthday</th>
+									</tr>
+								</thead>
+
 	<!--
 		Using FOREACH LOOP for the users array
-		
+
 		myArray.forEach(function(el, index) {
 			// el - current element, i - index
 		});
 	-->
-	<tbody>
-	<% if (staffs) { %>
-	<% staffs.forEach(function(staff){ %>
-		<tr>
-			<td><%= staff.id %></td>
-			<td><%= staff.name %></td>
-			<td><%= staff.gender %></td>
-			<td><%= staff.birth %></td>
-			
-			<td>
-				<div style="float:left">
-					<a href='/staffs/edit/<%= staff.id %>'>Edit</a> &nbsp;							
-					
-				</div>
-			</td>
-		</tr>
-	<% }) %>
-	<% } %>
-	</tbody>
+								<tbody>
+									<% if (staffs) { %>
+										<% staffs.forEach(function(staff){ %>
+											<tr>
+												<td><%= staff.id %></td>
+												<td><%= staff.name %></td>
+												<td><%= staff.gender %></td>
+												<td><%= staff.birth %></td>
 
-</table>
-							
+												<td>
+													<div style="float:left">
+														<a href='/staffs/edit/<%= staff.id %>'>Edit</a> &nbsp;
+
+													</div>
+												</td>
+											</tr>
+										<% }) %>
+									<% } %>
+								</tbody>
+
+							</table>
+
 						</div>
 
 
@@ -139,14 +140,14 @@ including header content which is common for all pages
 
 
 
-				</h10>
-			</header>
-			<p>
+					</h10>
+				</header>
+				<p>
 
-			</p>
+				</p>
+			</div>
 		</div>
-	</div>
-</section>
+	</section>
 
 
 
