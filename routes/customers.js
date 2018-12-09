@@ -1,8 +1,14 @@
 var express = require('express')
 var app = express()
+var isAuthenticated = function (req, res, next) {
+	if (req.isAuthenticated())
+	  return next();
+	res.redirect('/login');
+  };
+
 
 // SHOW LIST OF USERS
-app.get('/', function(req, res, next) {
+app.get('/',isAuthenticated, function(req, res, next) {
 	req.getConnection(function(error, conn) {
 		conn.query('SELECT * FROM customer ORDER BY id DESC',function(err, rows, fields) {
 			//if(err) throw err
@@ -24,7 +30,7 @@ app.get('/', function(req, res, next) {
 })
 
 // SHOW ADD USER FORM
-app.get('/add', function(req, res, next){
+app.get('/add',isAuthenticated, function(req, res, next){
 	// render to views/user/add.ejs
 	res.render('customers/add', {
 		title: 'Add New Customer',
@@ -39,7 +45,7 @@ app.get('/add', function(req, res, next){
 })
 
 // ADD NEW USER POST ACTION
-app.post('/add', function(req, res, next){
+app.post('/add',isAuthenticated, function(req, res, next){
 	req.assert('name', 'Name is required').notEmpty()           //Validate name
     // req.assert('email', 'A valid email is required').isEmail()  //Validate email
 
@@ -60,7 +66,7 @@ app.post('/add', function(req, res, next){
 			id: req.sanitize('id').escape().trim(),
 			password: req.sanitize('password').escape().trim(),
 			name: req.sanitize('name').escape().trim(),
-			car: req.body.car,
+			car: req.sanitize('car').escape().trim(),
 			nation: req.sanitize('nation').escape().trim(),
 			phone: req.sanitize('phone').escape().trim(),
 			email: req.sanitize('email').escape().trim()
@@ -87,16 +93,7 @@ app.post('/add', function(req, res, next){
 					req.flash('success', 'Data added successfully!')
 
 					// render to views/user/add.ejs
-					res.render('customers/add', {
-						title: 'Add New Customer',
-						id: '',
-						password: '',
-						name: '',
-						car: '',
-						nation: '',
-						phone: '',
-						email: ''
-					})
+					res.redirect('/reservations/add')
 				}
 			})
 		})
@@ -113,18 +110,20 @@ app.post('/add', function(req, res, next){
 		 * because req.param('name') is deprecated
 		 */
         res.render('customers/add', {
-            title: 'Add New Customer',
-						name: user.name,
-						car: user.car,
-						nation: user.nation,
-						phone: user.phone,
-						email: user.email
-        })
+			title: 'Add New Customer',
+			id: user.id,
+			password: user.password,
+			name: user.name,
+			car: user.car,
+			nation: user.nation,
+			phone: user.phone,
+			email: user.email
+		})
     }
 })
 
 // SHOW EDIT USER FORM
-app.get('/edit/(:id)', function(req, res, next){
+app.get('/edit/(:id)',isAuthenticated, function(req, res, next){
 	req.getConnection(function(error, conn) {
 		conn.query("SELECT * FROM customer WHERE id = ?", req.params.id, function(err, rows, fields) {
 			if(err) throw err
@@ -153,7 +152,7 @@ app.get('/edit/(:id)', function(req, res, next){
 })
 
 // EDIT USER POST ACTION
-app.put('/edit/(:id)', function(req, res, next) {
+app.put('/edit/(:id)',isAuthenticated, function(req, res, next) {
 	req.assert('name', 'Name is required').notEmpty()           //Validate name
 
     // req.assert('email', 'A valid email is required').isEmail()  //Validate email
@@ -175,7 +174,7 @@ app.put('/edit/(:id)', function(req, res, next) {
 			id: req.sanitize('id').escape().trim(),
 			password: req.sanitize('password').escape().trim(),
 			name: req.sanitize('name').escape().trim(),
-			car: req.body.car,
+			car: req.sanitize('car').escape().trim(),
 			nation: req.sanitize('nation').escape().trim(),
 			phone: req.sanitize('phone').escape().trim(),
 			email: req.sanitize('email').escape().trim()
@@ -241,7 +240,7 @@ app.put('/edit/(:id)', function(req, res, next) {
 })
 
 // DELETE USER
-app.delete('/delete/(:id)', function(req, res, next) {
+app.delete('/delete/(:id)',isAuthenticated, function(req, res, next) {
 	var user = { id: req.params.id }
 
 	req.getConnection(function(error, conn) {

@@ -26,7 +26,7 @@ app.get('/', function(req, res, next) {
 app.get('/add', function(req, res, next){
 
 	req.getConnection(function(error, conn) {
-		conn.query('select * from room order by number',function(err, numbers, fields) {
+		conn.query('select number, type, price from room natural join room_type order by number',function(err, numbers, types, prices, fields) {
 			if (err) throw err;
 			conn.query('select * from customer ',function(err, customers, fields) {
 				if (err) throw err;
@@ -34,9 +34,11 @@ app.get('/add', function(req, res, next){
 				res.render('reservations/add', {
 					title: 'New Reservation',
 					numbers: numbers,
+					types: types,
+					prices: prices,
 					customers: customers,
-					indate: datetime.format(now, 'YYYY-MM-DDTHH:mm:ss'),
-					outdate: datetime.format(datetime.addDays(now, 1), 'YYYY-MM-DDTHH:mm:ss')
+					indate: datetime.format(now, 'YYYY-MM-DD'),
+					outdate: datetime.format(datetime.addDays(now, 1), 'YYYY-MM-DD')
 				})
 			})
 		})
@@ -46,15 +48,15 @@ app.get('/add', function(req, res, next){
 app.get('/check', function(req, res, next){
 
 	req.getConnection(function(error, conn) {
-		conn.query('select * from room order by number',function(err, numbers, fields) {
+		conn.query('select number, type, price from room natural join room_type order by number',function(err, numbers, types, prices, fields) {
 			if (err) throw err;
 			conn.query('select * from customer ',function(err, customers, fields) {
 				if (err) throw err;
 				var now = new Date();
 				res.render('reservations/check', {
 					title: 'New Reservation',
-					indate: datetime.format(now, 'YYYY-MM-DDTHH:mm:ss'),
-					outdate: datetime.format(datetime.addDays(now, 1), 'YYYY-MM-DDTHH:mm:ss')
+					indate: datetime.format(now, 'YYYY-MM-DD'),
+					outdate: datetime.format(datetime.addDays(now, 1), 'YYYY-MM-DD')
 				})
 			})
 		})
@@ -70,21 +72,23 @@ app.post('/check', function(req, res, next) {
 
     if( !errors ) {
 
-		var indate = moment(req.body.indate).format('YYYY-MM-DD HH:mm:ss');
-		var outdate = moment(req.body.outdate).format('YYYY-MM-DD HH:mm:ss');
+		var indate = moment(req.body.indate).format('YYYY-MM-DD');
+		var outdate = moment(req.body.outdate).format('YYYY-MM-DD');
 		var sql = "select number from room where number not in (select number from reservation where indate <= '" + outdate + "' and outdate >= '" + indate +"') order by number";
 		console.log("post check")
 		console.log(indate)
 		console.log(outdate)
 
 		req.getConnection(function(error, conn) {
-			conn.query(sql, function(err, numbers) {
+			conn.query(sql, function(err, numbers, types, prices, fields) {
 				if (err) throw err;
 					conn.query('select * from customer ',function(err, customers, fields) {
 						if (err) throw err;
 						res.render('reservations/add', {
 							title: 'New Reservation',
 							numbers: numbers,
+							types: types,
+							prices: prices,
 							customers: customers,
 							indate: req.body.indate,
 							outdate: req.body.outdate
@@ -124,8 +128,8 @@ app.post('/add', function(req, res, next){
 		var params = {
 			id:req.body.customer,
 			number: req.body.number,
-			indate: moment(req.body.indate).format('YYYY-MM-DD HH:mm:ss'),
-			outdate: moment(req.body.outdate).format('YYYY-MM-DD HH:mm:ss'),
+			indate: moment(req.body.indate).format('YYYY-MM-DD'),
+			outdate: moment(req.body.outdate).format('YYYY-MM-DD'),
 			checkIn: req.body.checkIn ? true: false,
 			checkOut: req.body.checkOut ? true : false
 		};
@@ -140,16 +144,18 @@ app.post('/add', function(req, res, next){
 				if (err) {
 					req.flash('error', err)
 					console.log(err);
-					conn.query('select * from room order by number',function(err, numbers, fields) {
+					conn.query('select number, type, price from room natural join room_type order by number',function(err, numbers, types, prices, fields) {
 						if (err) throw err;
 						conn.query('select * from customer ',function(err, customers, fields) {
 							if (err) throw err;
 							res.render('reservations/add', {
 								title: 'New Reservation',
 								numbers: numbers,
+								types: types,
+								prices: prices,
 								customers: customers,
-								indate: datetime.format(now, 'YYYY-MM-DDTHH:mm:ss'),
-								outdate: datetime.format(datetime.addDays(now, 1), 'YYYY-MM-DDTHH:mm:ss')
+								indate: datetime.format(now, 'YYYY-MM-DD'),
+								outdate: datetime.format(datetime.addDays(now, 1), 'YYYY-MM-DD')
 							})
 						})
 					})
@@ -196,7 +202,7 @@ app.post('/add', function(req, res, next){
 app.get('/edit/(:code)', function(req, res, next){
 	req.getConnection(function(error, conn) {
 		conn.query('SELECT * FROM reservation WHERE code = ' + req.params.code, function(err, rows, fields) {
-			if(err) throw err;
+			if(err) throw err
 
 			if (rows.length <= 0) {
 				req.flash('error', 'Reservation not found with code = ' + req.params.code)
@@ -215,8 +221,8 @@ app.get('/edit/(:code)', function(req, res, next){
 								code: rows[0].code,
 								numbers: numbers,
 								customers: customers,
-								indate: moment(rows[0].indate).format('YYYY-MM-DDTHH:mm:ss'),
-								outdate: moment(rows[0].outdate).format('YYYY-MM-DDTHH:mm:ss'),
+								indate: moment(rows[0].indate).format('YYYY-MM-DD'),
+								outdate: moment(rows[0].outdate).format('YYYY-MM-DD'),
 								numbered: rows[0].number,
 								ided: rows[0].id,
 								checkIned: rows[0].checkIn,
@@ -242,8 +248,8 @@ app.put('/edit/(:code)', function(req, res, next) {
 		var params = {
 			id:req.body.customer,
 			number: req.body.number,
-			indate: moment(req.body.indate).format('YYYY-MM-DD HH:mm:ss'),
-			outdate: moment(req.body.outdate).format('YYYY-MM-DD HH:mm:ss'),
+			indate: moment(req.body.indate).format('YYYY-MM-DD'),
+			outdate: moment(req.body.outdate).format('YYYY-MM-DD'),
 			checkIn: req.body.checkIn ? true: false,
 			checkOut: req.body.checkOut ? true : false
 		};
@@ -268,8 +274,8 @@ app.put('/edit/(:code)', function(req, res, next) {
 								code: req.body.code,
 								numbers: numbers,
 								customers: customers,
-								indate: moment(req.body.indate).format('YYYY-MM-DDTHH:mm:ss'),
-								outdate: moment(req.body.outdate).format('YYYY-MM-DDTHH:mm:ss'),
+								indate: moment(req.body.indate).format('YYYY-MM-DD'),
+								outdate: moment(req.body.outdate).format('YYYY-MM-DD'),
 								numbered: req.body.number,
 								ided: req.body.id,
 								checkIned: req.body.checkIn,
